@@ -216,7 +216,7 @@ variable "load_balancer_name" {
 variable "storage_account_name" {
   description = "The name of the Azure Storage Account."
   type        = string
-  default     = "penaccountstorage"
+  default     = "pensaccountstorages"
 }
 
 # Variable for the storage account tier
@@ -237,7 +237,7 @@ variable "account_replication_type" {
 variable "storage_container_name" {
   description = "The name of the container in the storage account."
   type        = string
-  default     = "apple-containerstore" 
+  default     = "apples-containerstores" 
 }
 
 
