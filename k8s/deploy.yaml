@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terra-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: terra-app
+  template:
+    metadata:
+      labels:
+        app: terra-app
+    spec:
+      containers:
+        - name: terra-app
+          image: terra-app-image:latest
+          ports:
+            - containerPort: 80
