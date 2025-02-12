@@ -31,17 +31,17 @@ stages:
 
     - script: |
         echo "Initializing Terraform..."
-        terraform init -chdir=$(terraformDirectory) 
+        terraform init -chdir=$(terraformDirectory)  # Initialize Terraform with the correct directory
       displayName: 'Initialize Terraform'
 
     - script: |
         echo "Terraform plan..."
-        terraform plan -chdir=$(terraformDirectory) 
-      displayName: 'ITerraform plan'
+        terraform plan -chdir=$(terraformDirectory)  # Run terraform plan within the correct directory
+      displayName: 'Terraform Plan'
 
     - script: |
         echo "Applying Terraform configurations..."
-        terraform apply -auto-approve -chdir=$(terraformDirectory) 
+        terraform apply -auto-approve -chdir=$(terraformDirectory)  # Apply Terraform configurations
       displayName: 'Apply Terraform'
 
 - stage: BuildAndPushDockerImage
@@ -53,8 +53,10 @@ stages:
       vmImage: 'ubuntu-latest'
     steps:
     # GitHub Checkout to pull code from the repository
-    - task: Checkout@1  # Using Checkout@1 instead of Checkout@2
+    - task: Checkout@1  # You can also use Checkout@2 if you want to update this to the newer version
       displayName: 'Checkout GitHub Repo'
+      inputs:
+        repository: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub Repository URL
 
     # Build Docker image and push it to Azure Container Registry
     - task: Docker@2
