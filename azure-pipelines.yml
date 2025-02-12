@@ -53,7 +53,7 @@ stages:
       vmImage: 'ubuntu-latest'
     steps:
     # GitHub Checkout to pull code from the repository
-    - task: Checkout@1  # You can also use Checkout@2 if you want to update this to the newer version
+    - task: Checkout@1  # Using Checkout@1 instead of Checkout@2
       displayName: 'Checkout GitHub Repo'
       inputs:
         repository: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub Repository URL
