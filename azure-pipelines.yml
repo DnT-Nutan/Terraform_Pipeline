@@ -33,6 +33,11 @@ stages:
         echo "Initializing Terraform..."
         terraform init $(terraformDirectory)
       displayName: 'Initialize Terraform'
+      
+    - script: |
+        echo "Terraform plan..."
+        terraform plan $(terraformDirectory)
+      displayName: 'ITerraform plan'
 
     - script: |
         echo "Applying Terraform configurations..."
