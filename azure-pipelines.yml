@@ -48,18 +48,16 @@ stages:
       vmImage: 'ubuntu-latest'
     steps:
     # GitHub Checkout to pull code from the repository
-    - task: Checkout@1
+    - task: Checkout@1  # Using Checkout@1 instead of Checkout@2
       displayName: 'Checkout GitHub Repo'
-      inputs:
-        repository: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub Repository URL
 
     # Build Docker image and push it to Azure Container Registry
     - task: Docker@2
       displayName: 'Build Docker Image'
       inputs:
         command: 'build'
-        containerRegistry: 'az-pipeline-connec'  # ACR service connection name
-        repository: '$(azureContainerRegistry)/$(imageName)'  # ACR repository path
+        containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection name for your ACR
+        repository: '$(azureContainerRegistry)/$(imageName)'  # Repository format: <ACR_Name>/<Image_Name>
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
         tags: '$(Build.BuildId)'  # Tag the image with Build ID for uniqueness
 
@@ -67,8 +65,8 @@ stages:
       displayName: 'Push Docker Image to ACR'
       inputs:
         command: 'push'
-        containerRegistry: 'az-pipeline-connec'  # ACR service connection name
-        repository: '$(azureContainerRegistry)/$(imageName)'  # ACR repository path
+        containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection name for your ACR
+        repository: '$(azureContainerRegistry)/$(imageName)'  # Repository format: <ACR_Name>/<Image_Name>
         tags: '$(Build.BuildId)'  # Push image with the Build ID tag
 
 - stage: DeployToAKS
@@ -83,7 +81,7 @@ stages:
     - task: AzureCLI@2
       displayName: "Azure Login"
       inputs:
-        azureSubscription: 'Azure-Cloud-Account-DNT'  # Azure service connection reference (ensure this connection is correct)
+        azureSubscription: 'Azure-Cloud-Account-DNT'  # Ensure this is the correct Azure service connection reference
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
