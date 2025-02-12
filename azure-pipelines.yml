@@ -19,8 +19,8 @@ stages:
   jobs:
   - job: Provision
     displayName: 'Provision Azure Infrastructure with Terraform'
-    pool:
-      vmImage: 'ubuntu-latest'
+    pool: laptops
+
     steps:
     # Install Terraform
     - script: |
@@ -49,8 +49,8 @@ stages:
   jobs:
   - job: BuildAndPush
     displayName: 'Build and Push Docker Image to ACR'
-    pool:
-      vmImage: 'ubuntu-latest'
+    pool: laptops
+
     steps:
     # GitHub Checkout to pull code from the repository
     - task: Checkout@1  # Using Checkout@1 instead of Checkout@2
@@ -80,8 +80,8 @@ stages:
   jobs:
   - job: Deploy
     displayName: 'Deploy to AKS Cluster'
-    pool:
-      vmImage: 'ubuntu-latest'
+    pool: laptops
+
     steps:
     # Azure CLI task for logging in to Azure
     - task: AzureCLI@2
