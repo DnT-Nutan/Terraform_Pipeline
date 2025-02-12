@@ -1,19 +1,87 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  branches:
+    include:
+      - main  # Adjust to the branch you want to trigger the pipeline for
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  azureContainerRegistry: 'letestregistry.azurecr.io'  # The full ACR URL from Terraform variable
+  imageName: 'node-app'  # Docker image name
+  kubernetesCluster: 'new-aks-cluster'  # AKS Cluster name
+  kubernetesNamespace: 'default'  # Kubernetes namespace
+  resourceGroup: 'newton-resources'  # Azure Resource Group
+  terraformDirectory: 'terraform/'  # Directory for Terraform scripts
+  azureSubscriptionConnection: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'  # Azure Service Connection for Azure resources
+  dockerRegistryConnection: 'letestregistry'  # ACR service connection name, same as ACR name
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: ProvisionInfrastructure
+  jobs:
+  - job: Provision
+    displayName: 'Provision Azure Infrastructure with Terraform'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    # Install Terraform
+    - script: |
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update && sudo apt-get install terraform
+      displayName: 'Install Terraform'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    - script: |
+        echo "Initializing Terraform..."
+        terraform init $(terraformDirectory)
+      displayName: 'Initialize Terraform'
+
+    - script: |
+        echo "Applying Terraform configurations..."
+        terraform apply -auto-approve $(terraformDirectory)
+      displayName: 'Apply Terraform'
+
+- stage: BuildAndPushDockerImage
+  dependsOn: ProvisionInfrastructure
+  jobs:
+  - job: BuildAndPush
+    displayName: 'Build and Push Docker Image to ACR'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    # Build Docker image and push it to Azure Container Registry
+    - task: Docker@2
+      displayName: 'Build Docker Image'
+      inputs:
+        command: 'build'
+        containerRegistry: $(dockerRegistryConnection)  # ACR service connection name
+        repository: '$(azureContainerRegistry)/$(imageName)'  # ACR repository path
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile in the GitHub repo
+        tags: '$(Build.BuildId)'  # Tag the image with Build ID for uniqueness
+
+    - task: Docker@2
+      displayName: 'Push Docker Image to ACR'
+      inputs:
+        command: 'push'
+        containerRegistry: $(dockerRegistryConnection)  # ACR service connection name
+        repository: '$(azureContainerRegistry)/$(imageName)'  # ACR repository path
+        tags: '$(Build.BuildId)'  # Push image with the Build ID tag
+
+- stage: DeployToAKS
+  dependsOn: BuildAndPushDockerImage
+  jobs:
+  - job: Deploy
+    displayName: 'Deploy to AKS Cluster'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    # Azure CLI task for deploying Kubernetes manifests
+    - task: AzureCLI@2
+      displayName: 'Azure CLI Script'
+      inputs:
+        azureSubscription: '$(azureSubscriptionConnection)'  # Azure service connection name
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          cd $(K8S_WORKING_DIR)
+          echo "Setting up kubectl to access AKS..."
+          az aks get-credentials --resource-group $(AKS_RESOURCE_GROUP) --name $(AKS_CLUSTER_NAME)
+          kubectl apply -f deploy.yaml
+          kubectl apply -f service.yaml
