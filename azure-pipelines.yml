@@ -1,17 +1,18 @@
 trigger:
   branches:
     include:
-      - main  # Adjust to the branch you want to trigger the pipeline for
+      - main  # Adjust to the branch you want in your GitHub repo
 
 variables:
-  azureContainerRegistry: 'letestregistry.azurecr.io'  # The full ACR URL from Terraform variable
+  azureContainerRegistry: 'letestregistry.azurecr.io'  # ACR name with domain
   imageName: 'node-app'  # Docker image name
   kubernetesCluster: 'new-aks-cluster'  # AKS Cluster name
   kubernetesNamespace: 'default'  # Kubernetes namespace
   resourceGroup: 'newton-resources'  # Azure Resource Group
   terraformDirectory: 'terraform/'  # Directory for Terraform scripts
-  azureSubscriptionConnection: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'  # Azure Service Connection for Azure resources
-  dockerRegistryConnection: 'letestregistry'  # ACR service connection name, same as ACR name
+  AZURE_SUBSCRIPTION_CONNECTION: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'  # Azure Service Connection for Azure resources
+  dockerRegistryConnection: 'letestregistry'  # ACR service connection name
+  githubRepo: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub repository URL
 
 stages:
 - stage: ProvisionInfrastructure
@@ -23,8 +24,8 @@ stages:
     steps:
     # Install Terraform
     - script: |
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-        sudo apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
+        sudo apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
         sudo apt-get update && sudo apt-get install terraform
       displayName: 'Install Terraform'
 
@@ -46,21 +47,27 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
+    # GitHub Checkout to pull code from the repository
+    - task: Checkout@1
+      displayName: 'Checkout GitHub Repo'
+      inputs:
+        repository: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub Repository URL
+
     # Build Docker image and push it to Azure Container Registry
     - task: Docker@2
       displayName: 'Build Docker Image'
       inputs:
         command: 'build'
-        containerRegistry: $(dockerRegistryConnection)  # ACR service connection name
+        containerRegistry: 'az-pipeline-connec'  # ACR service connection name
         repository: '$(azureContainerRegistry)/$(imageName)'  # ACR repository path
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile in the GitHub repo
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
         tags: '$(Build.BuildId)'  # Tag the image with Build ID for uniqueness
 
     - task: Docker@2
       displayName: 'Push Docker Image to ACR'
       inputs:
         command: 'push'
-        containerRegistry: $(dockerRegistryConnection)  # ACR service connection name
+        containerRegistry: 'az-pipeline-connec'  # ACR service connection name
         repository: '$(azureContainerRegistry)/$(imageName)'  # ACR repository path
         tags: '$(Build.BuildId)'  # Push image with the Build ID tag
 
@@ -72,16 +79,15 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-    # Azure CLI task for deploying Kubernetes manifests
+    # Azure CLI task for logging in to Azure
     - task: AzureCLI@2
-      displayName: 'Azure CLI Script'
+      displayName: "Azure Login"
       inputs:
-        azureSubscription: '$(azureSubscriptionConnection)'  # Azure service connection name
+        azureSubscription: 'Azure-Cloud-Account-DNT'  # Azure service connection reference (ensure this connection is correct)
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          cd $(K8S_WORKING_DIR)
           echo "Setting up kubectl to access AKS..."
-          az aks get-credentials --resource-group $(AKS_RESOURCE_GROUP) --name $(AKS_CLUSTER_NAME)
-          kubectl apply -f deploy.yaml
-          kubectl apply -f service.yaml
+          az aks get-credentials --resource-group $(resourceGroup) --name $(kubernetesCluster)
+          kubectl apply -f $(Build.SourcesDirectory)/deploy.yaml
+          kubectl apply -f $(Build.SourcesDirectory)/service.yaml
