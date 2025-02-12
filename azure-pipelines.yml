@@ -55,8 +55,7 @@ stages:
     # GitHub Checkout to pull code from the repository
     - task: Checkout@1  # Using Checkout@1 instead of Checkout@2
       displayName: 'Checkout GitHub Repo'
-      inputs:
-        repository: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub Repository URL
+
 
     # Build Docker image and push it to Azure Container Registry
     - task: Docker@2
