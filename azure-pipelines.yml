@@ -31,17 +31,17 @@ stages:
 
     - script: |
         echo "Initializing Terraform..."
-        terraform init $(terraformDirectory)
+        terraform init -chdir=$(terraformDirectory) 
       displayName: 'Initialize Terraform'
-      
+
     - script: |
         echo "Terraform plan..."
-        terraform plan $(terraformDirectory)
+        terraform plan -chdir=$(terraformDirectory) 
       displayName: 'ITerraform plan'
 
     - script: |
         echo "Applying Terraform configurations..."
-        terraform apply -auto-approve $(terraformDirectory)
+        terraform apply -auto-approve -chdir=$(terraformDirectory) 
       displayName: 'Apply Terraform'
 
 - stage: BuildAndPushDockerImage
