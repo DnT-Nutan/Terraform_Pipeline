@@ -1,27 +1,25 @@
 trigger:
   branches:
     include:
-      - main  # Trigger pipeline on main branch
+      - main  # Adjust to the branch you want in your GitHub repo
 
 variables:
-  azureContainerRegistry: 'letestregistry.azurecr.io'  # Azure Container Registry (ACR) name with domain
+  azureContainerRegistry: 'letestregistry.azurecr.io'  # ACR name with domain
   imageName: 'node-app'  # Docker image name
   kubernetesCluster: 'new-aks-cluster'  # AKS Cluster name
   kubernetesNamespace: 'default'  # Kubernetes namespace
   resourceGroup: 'newton-resources'  # Azure Resource Group
   terraformDirectory: 'terraform/'  # Directory for Terraform scripts
-  AZURE_SUBSCRIPTION_CONNECTION: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'  # Azure Subscription Service Connection
+  AZURE_SUBSCRIPTION_CONNECTION: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'  # Azure Service Connection for Azure resources
   dockerRegistryConnection: 'letestregistry'  # ACR service connection name
   githubRepo: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub repository URL
+
 stages:
 - stage: ProvisionInfrastructure
-  displayName: 'Provision Azure Infrastructure'
   jobs:
   - job: Provision
     displayName: 'Provision Azure Resources with Terraform'
-    pool: 
-      vmImage: 'ubuntu-latest'
-
+    pool: laptops
     steps:
     # Install Terraform
     - script: |
@@ -30,44 +28,29 @@ stages:
         sudo apt-get update && sudo apt-get install terraform
       displayName: 'Install Terraform'
 
-    # Checkout the latest code from GitHub
+    # Checkout the repository from GitHub
     - task: Checkout@1
-      displayName: 'Checkout GitHub Repo'
+      displayName: 'Checkout GitHub Repository'
 
-    # Fetch the latest Terraform state file from GitHub (if needed)
-    - script: |
-        echo "Fetching the latest terraform.tfstate..."
-        git pull origin main  
-      displayName: 'Get Latest Terraform State File'
-
-    # Log environment variables to debug missing keys
-    - script: |
-        echo "Resource Group: $(resourceGroup)"
-        echo "Azure Container Registry: $(azureContainerRegistry)"
-        echo "Image Name: $(imageName)"
-        terraform version
-      displayName: 'Log Variables and Check Terraform Version'
-
-    # Initialize Terraform
+    # Initialize Terraform with remote backend
     - script: |
         echo "Initializing Terraform..."
-        cd $(terraformDirectory) && terraform init
-      displayName: 'Initialize Terraform'
+        cd $(terraformDirectory) && terraform init -backend-config="storage_account_name=$(tfStorageAccount)" -backend-config="container_name=$(tfContainerName)" -backend-config="key=$(tfStateKey)"
+      displayName: 'Terraform Init'
 
-    # Run Terraform Plan to preview the changes
+    # Run Terraform Plan
     - script: |
-        echo "Running Terraform plan..."
+        echo "Running Terraform Plan..."
         cd $(terraformDirectory) && terraform plan -var="image_name=$(imageName)" -var="resource_group=$(resourceGroup)"
       displayName: 'Terraform Plan'
 
-    # Apply Terraform configuration to provision resources
+    # Apply Terraform Plan
     - script: |
-        echo "Applying Terraform configurations..."
+        echo "Applying Terraform Plan..."
         cd $(terraformDirectory) && terraform apply -auto-approve -var="image_name=$(imageName)" -var="resource_group=$(resourceGroup)"
       displayName: 'Apply Terraform'
 
 - stage: BuildAndPushDockerImage
-  displayName: 'Build and Push Docker Image'
   dependsOn: ProvisionInfrastructure
   jobs:
   - job: BuildAndPush
@@ -75,46 +58,49 @@ stages:
     pool: laptops
 
     steps:
-    # Checkout the latest code from GitHub
+    # Checkout the repository from GitHub
     - task: Checkout@1
-      displayName: 'Checkout GitHub Repo'
+      displayName: 'Checkout GitHub Repository'
 
-    # Build Docker image and push it to Azure Container Registry
+    # Build Docker image and push to Azure Container Registry
     - task: Docker@2
       displayName: 'Build Docker Image'
       inputs:
         command: 'build'
-        containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection for your ACR
-        repository: '$(azureContainerRegistry)/$(imageName)'  # Docker repository path
+        containerRegistry: 'az-pipeline-connec'  # ACR service connection
+        repository: '$(azureContainerRegistry)/$(imageName)'  # ACR repository format
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
-        tags: '$(Build.BuildId)'  # Use Build ID as tag
+        tags: '$(Build.BuildId)'  # Tag the image with Build ID for uniqueness
 
     - task: Docker@2
       displayName: 'Push Docker Image to ACR'
       inputs:
         command: 'push'
-        containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection for your ACR
-        repository: '$(azureContainerRegistry)/$(imageName)'  # Docker repository path
-        tags: '$(Build.BuildId)'  # Push image with Build ID tag
+        containerRegistry: 'az-pipeline-connec'  # ACR service connection
+        repository: '$(azureContainerRegistry)/$(imageName)'  # ACR repository format
+        tags: '$(Build.BuildId)'  # Push image with the Build ID tag
 
 - stage: DeployToAKS
-  displayName: 'Deploy to AKS'
   dependsOn: BuildAndPushDockerImage
   jobs:
   - job: Deploy
-    displayName: 'Deploy to AKS Cluster'
+    displayName: 'Deploy Docker Image to AKS'
     pool: laptops
 
     steps:
-    # Azure CLI task to login and deploy to AKS
+    # Azure CLI task for logging in to Azure
     - task: AzureCLI@2
-      displayName: "Azure CLI Login and AKS Deployment"
+      displayName: 'Azure Login and Deploy'
       inputs:
-        azureSubscription: 'Azure-Cloud-Account-DNT'  # Replace with your Azure service connection reference
+        azureSubscription: 'Azure-Cloud-Account-DNT'  # Azure Service Connection for the AKS cluster
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
+          # Set up kubectl to access the AKS cluster
           echo "Setting up kubectl to access AKS..."
           az aks get-credentials --resource-group $(resourceGroup) --name $(kubernetesCluster)
+          
+          # Apply Kubernetes manifests
+          echo "Deploying application to AKS..."
           kubectl apply -f $(Build.SourcesDirectory)/deploy.yaml
           kubectl apply -f $(Build.SourcesDirectory)/service.yaml
