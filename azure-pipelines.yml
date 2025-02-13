@@ -4,14 +4,14 @@ trigger:
       - main 
 
 variables:
-  azureContainerRegistry: 'letestregistry.azurecr.io'  # ACR name with domain
-  imageName: 'node-app'  # Docker image name
-  kubernetesCluster: 'new-aks-cluster'  # AKS Cluster name
+  azureContainerRegistry: 'tujanenarepo.azurecr.io'  # ACR name with domain
+  #imageName: 'node-app'  # Docker image name
+  kubernetesCluster: 'apple-aks-cluster'  # AKS Cluster name
   kubernetesNamespace: 'default'  # Kubernetes namespace
-  resourceGroup: 'newton-resources'  # Azure Resource Group
+  resourceGroup: 'apple-resources'  # Azure Resource Group
   terraformDirectory: 'terraform/'  # Directory for Terraform scripts
-  AZURE_SUBSCRIPTION_CONNECTION: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'  # Azure Service Connection for Azure resources
-  dockerRegistryConnection: 'letestregistry'  # ACR service connection name
+  AZURE_SUBSCRIPTION_CONNECTION: 'Azure-Cloud-Account-DNT'  # Azure Service Connection for Azure resources
+  dockerRegistryConnection: 'tujanenarepo'  # ACR service connection name
   githubRepo: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub repository URL
 
 stages:
