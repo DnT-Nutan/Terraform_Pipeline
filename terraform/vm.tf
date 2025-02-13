@@ -47,3 +47,4 @@ resource "azurerm_virtual_machine" "vm" {
     version   = var.image_version
   }
 }
+
