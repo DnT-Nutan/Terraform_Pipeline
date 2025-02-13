@@ -29,19 +29,32 @@ stages:
         sudo apt-get update && sudo apt-get install terraform
       displayName: 'Install Terraform'
 
+    # GitHub Checkout to pull code from the repository
+    - task: Checkout@1  # Using Checkout@1 instead of Checkout@2
+      displayName: 'Checkout GitHub Repo'
+
+    # Fetch the latest state file if it's needed from GitHub
+    - script: |
+        echo "Fetching latest terraform.tfstate..."
+        git pull origin main  
+      displayName: 'Get Latest Terraform State File'
+
+    # Initialize Terraform
     - script: |
         echo "Initializing Terraform..."
-        cd $(terraformDirectory) && terraform init  
+        cd $(terraformDirectory) && terraform init
       displayName: 'Initialize Terraform'
 
+    # Plan Terraform
     - script: |
-        echo "Terraform plan..."
-        cd $(terraformDirectory) && terraform plan 
+        echo "Running Terraform plan..."
+        cd $(terraformDirectory) && terraform plan -var="image_name=$(imageName)" -var="resource_group=$(resourceGroup)"
       displayName: 'Terraform Plan'
 
+    # Apply Terraform changes
     - script: |
         echo "Applying Terraform configurations..."
-        cd $(terraformDirectory) && terraform apply -auto-approve 
+        cd $(terraformDirectory) && terraform apply -auto-approve -var="image_name=$(imageName)" -var="resource_group=$(resourceGroup)"
       displayName: 'Apply Terraform'
 
 - stage: BuildAndPushDockerImage
@@ -56,14 +69,13 @@ stages:
     - task: Checkout@1  # Using Checkout@1 instead of Checkout@2
       displayName: 'Checkout GitHub Repo'
 
-
     # Build Docker image and push it to Azure Container Registry
     - task: Docker@2
       displayName: 'Build Docker Image'
       inputs:
         command: 'build'
         containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection name for your ACR
-        repository: '$(azureContainerRegistry)/$(imageName)'   #Repository format:# <ACR_Name>/<Image_Name>
+        repository: '$(azureContainerRegistry)/$(imageName)' 
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
         tags: '$(Build.BuildId)'  # Tag the image with Build ID for uniqueness
 
@@ -72,7 +84,7 @@ stages:
       inputs:
         command: 'push'
         containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection name for your ACR
-        repository: '$(azureContainerRegistry)/$(imageName)'  # Repository format: <ACR_Name>/<Image_Name>
+        repository: '$(azureContainerRegistry)/$(imageName)'  
         tags: '$(Build.BuildId)'  # Push image with the Build ID tag
 
 - stage: DeployToAKS
