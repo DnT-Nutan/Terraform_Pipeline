@@ -2,7 +2,7 @@
 variable "resource_group_name" {
   description = "The name of the resource group."
   type        = string
-  default     = "newton-resources"
+  default     = "apple-resources"
 }
 
 # Variable for the location
@@ -16,7 +16,7 @@ variable "location" {
 variable "vnet_name" {
   description = "The name of the virtual network."
   type        = string
-  default     = "new-vnet"
+  default     = "apple-vnet"
 }
 
 # Variable for the address space of the virtual network
@@ -30,7 +30,7 @@ variable "vnet_address_space" {
 variable "subnet_name" {
   description = "The name of the subnet."
   type        = string
-  default     = "new-subnet"
+  default     = "apple-subnet"
 }
 
 # Variable for the address prefix of the subnet
@@ -44,13 +44,13 @@ variable "subnet_address_prefix" {
 variable "lb_public_ip_name" {
   description = "The name of the public IP address."
   type        = string
-  default     = "lb-public-ip"
+  default     = "apple-public-lb-ip"
 }
 
 variable "vm_public_ip_name" {
   description = "The name of the public IP address."
   type        = string
-  default     = "newton-public-ip"
+  default     = "apple-public-ip"
 }
 
 # Variable for the public IP allocation method
@@ -64,14 +64,14 @@ variable "public_ip_allocation_method" {
 variable "nsg_name" {
   description = "The name of the Network Security Group."
   type        = string
-  default     = "new-nsg"
+  default     = "apple-nsg"
 }
 
 # Variable for the virtual machine name
 variable "vm_name" {
   description = "The name of the virtual machine."
   type        = string
-  default     = "new-vm"
+  default     = "apple-vm"
 }
 
 # Variable for the VM size
@@ -85,7 +85,7 @@ variable "vm_size" {
 variable "os_disk_name" {
   description = "The name of the OS disk."
   type        = string
-  default     = "new-os-disk"
+  default     = "apple-os-disk"
 }
 
 # Variable for the admin username
@@ -100,7 +100,7 @@ variable "admin_password" {
   description = "The admin password for the virtual machine."
   type        = string
   sensitive   = true
-  default     = "pass$0000"  
+  default     = "pass$00000"  
 }
 
 # Variable for the image reference
@@ -139,7 +139,7 @@ variable "dns_zone_name" {
 variable "acr_name" {
   description = "The name of the Azure Container Registry."
   type        = string
-  default     = "letestregistry"  
+  default     = "tujanenarepo"  
 }
 
 # Variable for Azure Container Registry SKU
@@ -153,7 +153,7 @@ variable "acr_sku" {
 variable "vmss_name" {
   description = "The name of the Virtual Machine Scale Set."
   type        = string
-  default     = "new-vmss"  
+  default     = "apple-vmss"  
 }
 
 # Variable for VMSS SKU
@@ -167,7 +167,7 @@ variable "vmss_sku" {
 variable "vmss_instance_count" {
   description = "The number of instances in the Virtual Machine Scale Set."
   type        = number
-  default     = 1
+  default     = 2
 }
 
 # Variable for the VMSS upgrade policy
@@ -181,42 +181,42 @@ variable "vmss_upgrade_policy" {
 variable "vmss_health_probe_name" {
   description = "The name of the health probe for the VMSS."
   type        = string
-  default     = "new-health-probe"
+  default     = "apple-health-probe"
 }
 
 # Variable for the VMSS load balancer name
 variable "vmss_load_balancer_name" {
   description = "The name of the load balancer for the VMSS."
   type        = string
-  default     = "new-load-balancer"
+  default     = "apple-load-balancer"
 }
 
 # Variable for the VMSS network interface name
 variable "vmss_nic_name" {
   description = "The name of the network interface for the VMSS."
   type        = string
-  default     = "new-vmss-nic"
+  default     = "apple-vmss-nic"
 }
 
 # Variable for the VMSS network security group name
 variable "vmss_nsg_name" {
   description = "The name of the network security group for the VMSS."
   type        = string
-  default     = "new-vmss-nsg"
+  default     = "apple-vmss-nsg"
 }
 
 # Variable for Load Balancer
 variable "load_balancer_name" {
   description = "Name of the Load Balancer."
   type        = string
-  default     = "new-lb"
+  default     = "apple-lb"
 }
 
 # Variable for the storage account name
 variable "storage_account_name" {
   description = "The name of the Azure Storage Account."
   type        = string
-  default     = "pensaccountstorages"
+  default     = "teresangyarrstorage"
 }
 
 # Variable for the storage account tier
@@ -237,7 +237,7 @@ variable "account_replication_type" {
 variable "storage_container_name" {
   description = "The name of the container in the storage account."
   type        = string
-  default     = "apples-containerstores" 
+  default     = "apple-containerstore" 
 }
 
 
@@ -245,7 +245,7 @@ variable "storage_container_name" {
 variable "subnet_new_name" {
   description = "The name of the subnet for the Kubernetes cluster."
   type        = string
-  default     = "public-subnet"
+  default     = "apple-public-subnet"
 }
 
 # Variable for the address prefix of the subnet
@@ -259,7 +259,7 @@ variable "public_subnet_address_prefix" {
 variable "aks_cluster_name" {
   description = "The name of the AKS cluster."
   type        = string
-  default     = "new-aks-cluster"
+  default     = "apple-aks-cluster"
 }
 
 # AKS DNS Name Prefix
@@ -294,7 +294,7 @@ variable "aks_node_pool_count" {
 variable "postgresql_server_name" {
   description = "The name of the PostgreSQL server"
   type        = string
-  default     = "new-postserver"
+  default     = "apple-postserver"
 }
 
 variable "postgresql_version" {
@@ -313,7 +313,7 @@ variable "administrator_login_password" {
   description = "The password for the administrator login"
   type        = string
   sensitive   = true
-  default     = "pass$0000"
+  default     = "pass$00000"
 }
 
 variable "sku_name" {
@@ -331,7 +331,7 @@ variable "storage_mb" {
 variable "database_name" {
   description = "The name of the PostgreSQL database"
   type        = string
-  default     = "newdbpostgres"
+  default     = "appledbpostgres"
 }
 
 variable "database_charset" {
