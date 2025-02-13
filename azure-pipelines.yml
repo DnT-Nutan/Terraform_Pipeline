@@ -13,14 +13,14 @@ variables:
   AZURE_SUBSCRIPTION_CONNECTION: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'  # Azure Subscription Service Connection
   dockerRegistryConnection: 'letestregistry'  # ACR service connection name
   githubRepo: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub repository URL
-
 stages:
 - stage: ProvisionInfrastructure
   displayName: 'Provision Azure Infrastructure'
   jobs:
   - job: Provision
     displayName: 'Provision Azure Resources with Terraform'
-    pool: laptops
+    pool: 
+      vmImage: 'ubuntu-latest'
 
     steps:
     # Install Terraform
@@ -39,6 +39,14 @@ stages:
         echo "Fetching the latest terraform.tfstate..."
         git pull origin main  
       displayName: 'Get Latest Terraform State File'
+
+    # Log environment variables to debug missing keys
+    - script: |
+        echo "Resource Group: $(resourceGroup)"
+        echo "Azure Container Registry: $(azureContainerRegistry)"
+        echo "Image Name: $(imageName)"
+        terraform version
+      displayName: 'Log Variables and Check Terraform Version'
 
     # Initialize Terraform
     - script: |
