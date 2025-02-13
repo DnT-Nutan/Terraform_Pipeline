@@ -40,15 +40,16 @@ variable "subnet_address_prefix" {
   default     = ["10.0.1.0/24"]
 }
 
-# Variable for the public IP name
+# Variable for the public IP name for Load Balancer
 variable "lb_public_ip_name" {
-  description = "The name of the public IP address."
+  description = "The name of the public IP address for the Load Balancer."
   type        = string
   default     = "apple-public-lb-ip"
 }
 
+# Variable for the public IP name for Virtual Machine
 variable "vm_public_ip_name" {
-  description = "The name of the public IP address."
+  description = "The name of the public IP address for the Virtual Machine."
   type        = string
   default     = "apple-public-ip"
 }
@@ -240,15 +241,14 @@ variable "storage_container_name" {
   default     = "apple-containerstore" 
 }
 
-
-#Variable for New subnet
+# Variable for New subnet
 variable "subnet_new_name" {
   description = "The name of the subnet for the Kubernetes cluster."
   type        = string
   default     = "apple-public-subnet"
 }
 
-# Variable for the address prefix of the subnet
+# Variable for the address prefix of the new public subnet
 variable "public_subnet_address_prefix" {
   description = "The address prefix for the new public subnet."
   type        = string
