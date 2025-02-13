@@ -10,7 +10,7 @@ variables:
   kubernetesNamespace: 'default'
   resourceGroup: 'newton-resources'
   terraformDirectory: 'terraform/'
-  AZURE_SUBSCRIPTION_CONNECTION: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'
+  AZURE_SUBSCRIPTION_CONNECTION: 'Azure-Cloud-Account-DNT'
   dockerRegistryConnection: 'letestregistry'
   githubRepo: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'
 
@@ -27,16 +27,17 @@ stages:
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
         sudo apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
         sudo apt-get update && sudo apt-get install terraform
+        terraform version
       displayName: 'Install Terraform'
 
     # Checkout the repository from GitHub
     - task: Checkout@1
       displayName: 'Checkout GitHub Repository'
 
-    # Initialize Terraform with backend configuration if required
+    # Initialize Terraform
     - script: |
         echo "Initializing Terraform..."
-        cd $(terraformDirectory) && terraform init -backend-config="storage_account_name=$(tfStorageAccount)" -backend-config="container_name=$(tfContainerName)" -backend-config="key=$(tfStateKey)"
+        cd $(terraformDirectory) && terraform init
       displayName: 'Terraform Init'
 
     # Run Terraform Plan
@@ -97,7 +98,6 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          # Set up kubectl to access the AKS cluster
           echo "Setting up kubectl to access AKS..."
           az aks get-credentials --resource-group $(resourceGroup) --name $(kubernetesCluster)
           
