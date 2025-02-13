@@ -35,10 +35,10 @@ stages:
         cd $(terraformDirectory) && terraform init  
       displayName: 'Initialize Terraform'
 
-#    - script: |
-#        echo "Terraform plan..."
-#       cd $(terraformDirectory) && terraform plan 
-#      displayName: 'Terraform Plan'
+    - script: |
+        echo "Terraform plan..."
+        cd $(terraformDirectory) && terraform plan 
+      displayName: 'Terraform Plan'
 
     - script: |
         echo "Applying Terraform configurations..."
