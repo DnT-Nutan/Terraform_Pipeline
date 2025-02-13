@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - main  # Adjust to the branch you want in your GitHub repo
+      - main 
 
 variables:
   azureContainerRegistry: 'letestregistry.azurecr.io'  # ACR name with domain
