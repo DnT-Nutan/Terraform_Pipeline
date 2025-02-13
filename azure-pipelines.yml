@@ -1,24 +1,24 @@
 trigger:
   branches:
     include:
-      - main
+      - main  # Adjust to the branch you want in your GitHub repo
 
 variables:
-  azureContainerRegistry: 'letestregistry.azurecr.io'
-  imageName: 'node-app'
-  kubernetesCluster: 'new-aks-cluster'
-  kubernetesNamespace: 'default'
-  resourceGroup: 'newton-resources'
-  terraformDirectory: 'terraform/'
-  AZURE_SUBSCRIPTION_CONNECTION: 'Azure-Cloud-Account-DNT'
-  dockerRegistryConnection: 'letestregistry'
-  githubRepo: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'
+  azureContainerRegistry: 'letestregistry.azurecr.io'  # ACR name with domain
+  imageName: 'node-app'  # Docker image name
+  kubernetesCluster: 'new-aks-cluster'  # AKS Cluster name
+  kubernetesNamespace: 'default'  # Kubernetes namespace
+  resourceGroup: 'newton-resources'  # Azure Resource Group
+  terraformDirectory: 'terraform/'  # Directory for Terraform scripts
+  AZURE_SUBSCRIPTION_CONNECTION: 'd49e6059-7e63-4b1d-b093-492b8a94c5cb'  # Azure Service Connection for Azure resources
+  dockerRegistryConnection: 'letestregistry'  # ACR service connection name
+  githubRepo: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub repository URL
 
 stages:
 - stage: ProvisionInfrastructure
   jobs:
   - job: Provision
-    displayName: 'Provision Azure Resources with Terraform'
+    displayName: 'Provision Azure Infrastructure with Terraform'
     pool: laptops
 
     steps:
@@ -30,26 +30,19 @@ stages:
         terraform version
       displayName: 'Install Terraform'
 
-    # Checkout the repository from GitHub
-    - task: Checkout@1
-      displayName: 'Checkout GitHub Repository'
-
-    # Initialize Terraform
     - script: |
         echo "Initializing Terraform..."
-        cd $(terraformDirectory) && terraform init
-      displayName: 'Terraform Init'
+        cd $(terraformDirectory) && terraform init  
+      displayName: 'Initialize Terraform'
 
-    # Run Terraform Plan
     - script: |
-        echo "Running Terraform Plan..."
-        cd $(terraformDirectory) && terraform plan -var="image_name=$(imageName)" -var="resource_group=$(resourceGroup)"
+        echo "Terraform plan..."
+        cd $(terraformDirectory) && terraform plan -out=tfplan-newton
       displayName: 'Terraform Plan'
 
-    # Apply Terraform Plan
     - script: |
-        echo "Applying Terraform Plan..."
-        cd $(terraformDirectory) && terraform apply -auto-approve -var="image_name=$(imageName)" -var="resource_group=$(resourceGroup)"
+        echo "Applying Terraform configurations..."
+        cd $(terraformDirectory) && terraform apply "tfplan-newton" -auto-approve 
       displayName: 'Apply Terraform'
 
 - stage: BuildAndPushDockerImage
@@ -60,48 +53,46 @@ stages:
     pool: laptops
 
     steps:
-    # Checkout the repository from GitHub
-    - task: Checkout@1
-      displayName: 'Checkout GitHub Repository'
+    # GitHub Checkout to pull code from the repository
+    - task: Checkout@1  # Using Checkout@1 instead of Checkout@2
+      displayName: 'Checkout GitHub Repo'
 
-    # Build Docker image and push to Azure Container Registry
+
+    # Build Docker image and push it to Azure Container Registry
     - task: Docker@2
       displayName: 'Build Docker Image'
       inputs:
         command: 'build'
-        containerRegistry: 'az-pipeline-connec'
-        repository: '$(azureContainerRegistry)/$(imageName)'
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: '$(Build.BuildId)'
+        containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection name for your ACR
+        repository: '$(azureContainerRegistry)/$(imageName)'   
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
+        tags: '$(Build.BuildId)'  # Tag the image with Build ID for uniqueness
 
     - task: Docker@2
       displayName: 'Push Docker Image to ACR'
       inputs:
         command: 'push'
-        containerRegistry: 'az-pipeline-connec'
-        repository: '$(azureContainerRegistry)/$(imageName)'
-        tags: '$(Build.BuildId)'
+        containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection name for your ACR
+        repository: '$(azureContainerRegistry)/$(imageName)'  
+        tags: '$(Build.BuildId)'  # Push image with the Build ID tag
 
 - stage: DeployToAKS
   dependsOn: BuildAndPushDockerImage
   jobs:
   - job: Deploy
-    displayName: 'Deploy Docker Image to AKS'
+    displayName: 'Deploy to AKS Cluster'
     pool: laptops
 
     steps:
     # Azure CLI task for logging in to Azure
     - task: AzureCLI@2
-      displayName: 'Azure Login and Deploy'
+      displayName: "Azure Login"
       inputs:
-        azureSubscription: 'Azure-Cloud-Account-DNT'
+        azureSubscription: 'Azure-Cloud-Account-DNT'  # Ensure this is the correct Azure service connection reference
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
           echo "Setting up kubectl to access AKS..."
           az aks get-credentials --resource-group $(resourceGroup) --name $(kubernetesCluster)
-          
-          # Apply Kubernetes manifests
-          echo "Deploying application to AKS..."
           kubectl apply -f $(Build.SourcesDirectory)/deploy.yaml
           kubectl apply -f $(Build.SourcesDirectory)/service.yaml
