@@ -37,12 +37,12 @@ stages:
 
     - script: |
         echo "Terraform plan..."
-        cd $(terraformDirectory) && terraform plan -out=terraform.tfstate 
+        cd $(terraformDirectory) && terraform plan -out=terraform.tfplan 
       displayName: 'Terraform Plan'
 
     - script: |
         echo "Applying Terraform configurations..."
-        cd $(terraformDirectory) && terraform apply -auto-approve terraform.tfstate
+        cd $(terraformDirectory) && terraform apply -auto-approve terraform.tfplan
       displayName: 'Apply Terraform'
 
 - stage: BuildAndPushDockerImage
