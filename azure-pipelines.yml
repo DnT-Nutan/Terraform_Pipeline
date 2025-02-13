@@ -63,7 +63,7 @@ stages:
       inputs:
         command: 'build'
         containerRegistry: 'az-pipeline-connec'  # Ensure this is the correct service connection name for your ACR
-        repository: '$(azureContainerRegistry)/$(imageName)'  # Repository format: <ACR_Name>/<Image_Name>
+        repository: '$(azureContainerRegistry)/$(imageName)'   #Repository format:# <ACR_Name>/<Image_Name>
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
         tags: '$(Build.BuildId)'  # Tag the image with Build ID for uniqueness
 
