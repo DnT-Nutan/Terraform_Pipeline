@@ -4,15 +4,8 @@ trigger:
       - main 
 
 variables:
-  azureContainerRegistry: 'tujanenarepo.azurecr.io'  # ACR name with domain
-  #imageName: 'node-app'  # Docker image name
-  kubernetesCluster: 'apple-aks-cluster'  # AKS Cluster name
-  kubernetesNamespace: 'default'  # Kubernetes namespace
-  resourceGroup: 'apple-resources'  # Azure Resource Group
-  terraformDirectory: 'terraform/'  # Directory for Terraform scripts
-  AZURE_SUBSCRIPTION_CONNECTION: 'Azure-Cloud-Account-DNT'  # Azure Service Connection for Azure resources
-  dockerRegistryConnection: 'tujanenarepo'  # ACR service connection name
-  githubRepo: 'https://github.com/DnT-Nutan/Terraform_Pipeline.git'  # GitHub repository URL
+  terraformDirectory: 'terraform/'  # Path to Terraform scripts
+  AZURE_SUBSCRIPTION_CONNECTION: 'Azure-Cloud-Account-DNT'  # Azure Service Connection
 
 stages:
 - stage: ProvisionInfrastructure
@@ -30,18 +23,20 @@ stages:
         terraform version
       displayName: 'Install Terraform'
 
+    # Terraform Init with Backend Configuration
     - script: |
-        echo "Initializing Terraform..."
+        echo "Initializing Terraform Backend..."
         cd $(terraformDirectory) && terraform init  
-      displayName: 'Initialize Terraform'
+      displayName: 'Initialize Terraform Backend'
 
+    # Terraform Plan
     - script: |
         echo "Terraform plan..."
         cd $(terraformDirectory) && terraform plan 
       displayName: 'Terraform Plan'
 
+    # Terraform Apply
     - script: |
         echo "Applying Terraform configurations..."
         cd $(terraformDirectory) && terraform apply -auto-approve 
       displayName: 'Apply Terraform'
-
