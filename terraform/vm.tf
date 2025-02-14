@@ -24,10 +24,10 @@ resource "azurerm_virtual_machine" "vm" {
   os_profile_linux_config {
     disable_password_authentication = true
 
-    # Specify the SSH public key
+    # Specify the SSH public key 
     ssh_keys {
       path     = "/home/ubuntu/.ssh/authorized_keys"
-      key_data = file("/home/dnt/az-master_public_key.pub") 
+      key_data = file("/home/dnt/az-master_public_key.pub")
     }
   }
 
@@ -47,4 +47,3 @@ resource "azurerm_virtual_machine" "vm" {
     version   = var.image_version
   }
 }
-
