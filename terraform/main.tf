@@ -1,5 +1,6 @@
 terraform {
   required_version = ">=1.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -9,6 +10,13 @@ terraform {
       source  = "hashicorp/random"
       version = "~>3.0"
     }
+  }
+
+  backend "azurerm" {
+    resource_group_name   = "backend-resource"
+    storage_account_name  = "terrabackendstore"
+    container_name        = "tf-backend-container"
+    key                   = "terraform.tfstate"
   }
 }
 
