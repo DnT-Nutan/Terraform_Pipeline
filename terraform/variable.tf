@@ -113,6 +113,12 @@ variable "image_version" {
   default     = "latest"
 }
 
+# Variable for the public IP name
+variable "lb_public_ip_name" {
+  description = "The name of the public IP address."
+  type        = string
+  default     = "lb-public-ip"
+
 # Variable for DNS Zone Name
 variable "dns_zone_name" {
   description = "The name of the DNS zone."
