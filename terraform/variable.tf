@@ -85,7 +85,7 @@ variable "admin_username" {
 variable "admin_password" {
   description = "The administrator password."
   type        = string
-  default     = "yourpassword123!"
+  default     = "pass$00000"
 }
 
 # Variable for the Ubuntu image details
@@ -118,33 +118,34 @@ variable "lb_public_ip_name" {
   description = "The name of the public IP address."
   type        = string
   default     = "lb-public-ip"
+}
 
 # Variable for DNS Zone Name
 variable "dns_zone_name" {
   description = "The name of the DNS zone."
   type        = string
-  default     = "test.p.frii.site" 
+  default     = "test.p.frii.site"
 }
 
 # Variable for Azure Container Registry Name
 variable "acr_name" {
   description = "The name of the Azure Container Registry."
   type        = string
-  default     = "tujanenarepo"  
+  default     = "tujanenarepo"
 }
 
 # Variable for Azure Container Registry SKU
 variable "acr_sku" {
   description = "The SKU of the Azure Container Registry."
   type        = string
-  default     = "Basic"  
+  default     = "Basic"
 }
 
 # Variable for Virtual Machine Scale Set Name
 variable "vmss_name" {
   description = "The name of the Virtual Machine Scale Set."
   type        = string
-  default     = "apple-vmss"  
+  default     = "apple-vmss"
 }
 
 # Variable for VMSS SKU
@@ -228,7 +229,7 @@ variable "account_replication_type" {
 variable "storage_container_name" {
   description = "The name of the container in the storage account."
   type        = string
-  default     = "apple-containerstore" 
+  default     = "apple-containerstore"
 }
 
 # Variable for New subnet
@@ -242,7 +243,7 @@ variable "subnet_new_name" {
 variable "public_subnet_address_prefix" {
   description = "The address prefix for the new public subnet."
   type        = string
-  default     = "10.0.2.0/24"  
+  default     = "10.0.2.0/24"
 }
 
 # AKS Cluster Name
@@ -263,7 +264,7 @@ variable "aks_dns_name_prefix" {
 variable "aks_node_pool_name" {
   description = "The name of the AKS node pool."
   type        = string
-  default     = "nodepool" 
+  default     = "nodepool"
 }
 
 # AKS Node Pool VM Size
@@ -339,7 +340,7 @@ variable "database_collation" {
 variable "high_availability_mode" {
   description = "The high availability mode for the PostgreSQL server"
   type        = string
-  default     = "None"  
+  default     = "None"
 }
 
 # SSL enforcement for the PostgreSQL server
