@@ -1,7 +1,7 @@
 resource "azurerm_subnet" "public_subnet" {
   name                 = var.subnet_new_name
   resource_group_name  = var.resource_group_name
-  virtual_network_name  = azurerm_virtual_network.vnet[count.index].name
+  virtual_network_name  = azurerm_virtual_network.vnet.name
   address_prefixes     = [var.public_subnet_address_prefix]
 }
 
@@ -15,7 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     name       = var.aks_node_pool_name
     node_count = var.aks_node_pool_count
     vm_size    = var.aks_node_pool_vm_size
-    vnet_subnet_id = azurerm_subnet.public_subnet[count.index].id 
+    vnet_subnet_id = azurerm_subnet.public_subnet.id
   }
 
   identity {
