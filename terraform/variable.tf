@@ -54,63 +54,63 @@ variable "lb_public_ip_name" {
   default     = "apple-public-lb-ip"
 }
 
-# Number of VMs to create
-variable "vm_count" {
-  description = "Number of virtual machines to create."
-  type        = number
-  default     = 3
+variable "vm_public_ip_name" {
+  description = "The name of the public IP address."
+  type        = string
+  default     = "newton-public-ip"
 }
 
-# Variable for virtual machine names
-variable "vm_names" {
-  description = "List of VM names."
-  type        = list(string)
-  default     = ["apple-vm-0", "apple-vm-1", "apple-vm-2"]
-}
-
-# Variable for the public IP names
-variable "vm_public_ip_names" {
-  description = "List of public IP names for VMs."
-  type        = list(string)
-  default     = ["apple-public-ip-0", "apple-public-ip-1", "apple-public-ip-2"]
-}
-
-# Variable for the OS disk names
-variable "os_disk_names" {
-  description = "List of OS disk names."
-  type        = list(string)
-  default     = ["apple-os-disk-0", "apple-os-disk-1", "apple-os-disk-2"]
+# Variable for the public IP allocation method
+variable "public_ip_allocation_method" {
+  description = "The allocation method for the public IP address."
+  type        = string
+  default     = "Static"
 }
 
 # Variable for the Network Security Group name
 variable "nsg_name" {
   description = "The name of the Network Security Group."
   type        = string
-  default     = "apple-nsg"
+  default     = "new-nsg"
 }
 
-# VM size
+# Variable for the virtual machine name
+variable "vm_name" {
+  description = "The name of the virtual machine."
+  type        = string
+  default     = "new-vm"
+}
+
+# Variable for the VM size
 variable "vm_size" {
-  description = "Size of the virtual machine."
+  description = "The size of the virtual machine."
   type        = string
   default     = "Standard_DS1_v2"
 }
 
-# Admin credentials
+# Variable for the OS disk name
+variable "os_disk_name" {
+  description = "The name of the OS disk."
+  type        = string
+  default     = "new-os-disk"
+}
+
+# Variable for the admin username
 variable "admin_username" {
-  description = "Admin username for the VM."
+  description = "The admin username for the virtual machine."
   type        = string
   default     = "ubuntu"
 }
 
+# Variable for the admin password
 variable "admin_password" {
-  description = "Admin password for the VM."
+  description = "The admin password for the virtual machine."
   type        = string
   sensitive   = true
-  default     = "pass$00000"
+  default     = "pass$0000"  
 }
 
-# Image Reference (Ubuntu)
+# Variable for the image reference
 variable "image_publisher" {
   description = "The publisher of the image."
   type        = string
@@ -134,14 +134,6 @@ variable "image_version" {
   type        = string
   default     = "latest"
 }
-
-# Public IP allocation method
-variable "public_ip_allocation_method" {
-  description = "Public IP allocation method."
-  type        = string
-  default     = "Static"
-}
-
 # Variable for DNS Zone Name
 variable "dns_zone_name" {
   description = "The name of the DNS zone."
