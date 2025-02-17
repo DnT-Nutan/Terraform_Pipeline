@@ -10,12 +10,14 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = var.subnet_address_prefix
+
+  depends_on = [azurerm_virtual_network.vnet]
 }
 
 resource "azurerm_network_security_group" "nsg" {
-  name                     = var.nsg_name
-  location                 = var.location
-  resource_group_name      = var.resource_group_name
+  name                = var.nsg_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   # Allow SSH traffic on port 22
   security_rule {
@@ -57,28 +59,22 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
-resource "azurerm_public_ip" "vm_public_ip" {
-  name                = "vm-public-ip"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = "Dynamic"
-  sku                  = "Basic"
-}
-
-resource "azurerm_network_interface" "nic_vnet" {
-  name                = "new-nic"
-  location            = var.location
+resource "azurerm_network_interface" "nic" {
+  count               = length(var.vm_names)
+  name                = "nic-${var.vm_names[count.index]}"
+  location           = var.location
   resource_group_name = var.resource_group_name
 
   ip_configuration {
-    name                          = "new-ipconf"
+    name                          = "new-ipconf-${var.vm_names[count.index]}"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vm_public_ip.id  
+    public_ip_address_id          = azurerm_public_ip.vm_public_ip[count.index].id
   }
 }
 
 resource "azurerm_network_interface_security_group_association" "nic_nsg_association" {
-  network_interface_id      = azurerm_network_interface.nic_vnet.id
+  count                    = length(var.vm_names)
+  network_interface_id     = azurerm_network_interface.nic[count.index].id
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
