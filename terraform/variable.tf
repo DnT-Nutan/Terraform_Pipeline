@@ -12,32 +12,39 @@ variable "location" {
   default     = "West US 2"
 }
 
-# Variable for the virtual network name
-variable "vnet_name" {
-  description = "The name of the virtual network."
-  type        = string
-  default     = "apple-vnet"
-}
-
-# Variable for the address space of the virtual network
-variable "vnet_address_space" {
-  description = "The address space for the virtual network."
+# Variable for the virtual network names
+variable "vnet_names" {
+  description = "The names of the virtual networks."
   type        = list(string)
-  default     = ["10.0.0.0/16"]
+  default     = ["apple-vnet-1", "apple-vnet-2"]
 }
 
-# Variable for the subnet name
-variable "subnet_name" {
-  description = "The name of the subnet."
-  type        = string
-  default     = "apple-subnet"
+# Variable for the address space of the virtual networks
+variable "vnet_address_spaces" {
+  description = "The address spaces for the virtual networks."
+  type        = list(string)
+  default     = ["10.0.0.0/16", "10.1.0.0/16"]
 }
 
-# Variable for the address prefix of the subnet
-variable "subnet_address_prefix" {
-  description = "The address prefix for the subnet."
-  type        = list(string) 
-  default     = ["10.0.1.0/24"]
+# Variable for the subnet names
+variable "subnet_names" {
+  description = "The names of the subnets."
+  type        = list(string)
+  default     = ["apple-subnet-1", "apple-subnet-2"]
+}
+
+# Variable for the address prefix of the subnets
+variable "subnet_address_prefixes" {
+  description = "The address prefixes for the subnets."
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.1.1.0/24"]
+}
+
+# Variable for the Network Security Group (NSG) names
+variable "nsg_names" {
+  description = "The names of the network security groups."
+  type        = list(string)
+  default     = ["apple-nsg-1", "apple-nsg-2"]
 }
 
 # Variable for the public IP name for Load Balancer
