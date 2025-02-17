@@ -35,7 +35,7 @@ resource "azurerm_virtual_machine_scale_set" "new_vmss" {
 
     ip_configuration {
       name      = "ipconfig"
-      subnet_id = azurerm_subnet.subnet[count.index].id
+      subnet_id = azurerm_subnet.subnet.id
       primary   = true
       # Attach to Load Balancer's backend pool
       load_balancer_backend_address_pool_ids = [
