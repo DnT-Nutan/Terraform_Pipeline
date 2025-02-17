@@ -47,38 +47,18 @@ variable "nsg_names" {
   default     = ["apple-nsg-1", "apple-nsg-2"]
 }
 
-# Variable for the public IP name for Load Balancer
-variable "lb_public_ip_name" {
-  description = "The name of the public IP address for the Load Balancer."
-  type        = string
-  default     = "apple-public-lb-ip"
-}
-
-variable "vm_public_ip_name" {
-  description = "The name of the public IP address."
-  type        = string
-  default     = "newton-public-ip"
+# Variable for the virtual machine name
+variable "vm_name" {
+  description = "The names of the virtual machines."
+  type        = list(string)
+  default     = ["apple-vm-1", "apple-vm-2"]
 }
 
 # Variable for the public IP allocation method
 variable "public_ip_allocation_method" {
-  description = "The allocation method for the public IP address."
+  description = "The allocation method of the public IP."
   type        = string
   default     = "Static"
-}
-
-# Variable for the Network Security Group name
-variable "nsg_name" {
-  description = "The name of the Network Security Group."
-  type        = string
-  default     = "new-nsg"
-}
-
-# Variable for the virtual machine name
-variable "vm_name" {
-  description = "The name of the virtual machine."
-  type        = string
-  default     = "new-vm"
 }
 
 # Variable for the VM size
@@ -92,25 +72,23 @@ variable "vm_size" {
 variable "os_disk_name" {
   description = "The name of the OS disk."
   type        = string
-  default     = "new-os-disk"
+  default     = "os-disk"
 }
 
-# Variable for the admin username
+# Variable for the admin username and password
 variable "admin_username" {
-  description = "The admin username for the virtual machine."
+  description = "The administrator username."
   type        = string
-  default     = "ubuntu"
+  default     = "adminuser"
 }
 
-# Variable for the admin password
 variable "admin_password" {
-  description = "The admin password for the virtual machine."
+  description = "The administrator password."
   type        = string
-  sensitive   = true
-  default     = "pass$0000"  
+  default     = "yourpassword123!"
 }
 
-# Variable for the image reference
+# Variable for the Ubuntu image details
 variable "image_publisher" {
   description = "The publisher of the image."
   type        = string
@@ -134,6 +112,7 @@ variable "image_version" {
   type        = string
   default     = "latest"
 }
+
 # Variable for DNS Zone Name
 variable "dns_zone_name" {
   description = "The name of the DNS zone."
