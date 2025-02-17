@@ -18,7 +18,7 @@ resource "azurerm_subnet" "subnet" {
   depends_on = [azurerm_virtual_network.vnet]
 }
 
-# Create Network Security Groups (NSG)
+# Create Network Security Groups (NSGs)
 resource "azurerm_network_security_group" "nsg" {
   count               = 2  # Creating exactly 2 NSGs
   name                = var.nsg_names[count.index]  # Different name for each NSG
