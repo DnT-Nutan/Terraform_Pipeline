@@ -1,23 +1,29 @@
+# Create Virtual Networks (VNETs)
 resource "azurerm_virtual_network" "vnet" {
-  name                = var.vnet_name
+  count               = length(var.vnet_names)
+  name                = var.vnet_names[count.index]
   location            = var.location
-  resource_group_name = var.resource_group_name
-  address_space       = var.vnet_address_space
+  resource_group_name = azurerm_resource_group.rg.name
+  address_space       = [var.vnet_address_spaces[count.index]]
 }
 
+# Create Subnets within each VNET
 resource "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = var.subnet_address_prefix
+  count                 = length(var.subnet_names)
+  name                  = var.subnet_names[count.index]
+  resource_group_name   = azurerm_resource_group.rg.name
+  virtual_network_name  = azurerm_virtual_network.vnet[count.index].name
+  address_prefixes      = [var.subnet_address_prefixes[count.index]]
 
   depends_on = [azurerm_virtual_network.vnet]
 }
 
+# Create Network Security Groups (NSG)
 resource "azurerm_network_security_group" "nsg" {
-  name                = var.nsg_name
+  count               = length(var.nsg_names)
+  name                = var.nsg_names[count.index]
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.rg.name
 
   # Allow SSH traffic on port 22
   security_rule {
@@ -59,22 +65,24 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
+# Network Interfaces (NICs)
 resource "azurerm_network_interface" "nic" {
   count               = length(var.vm_names)
   name                = "nic-${var.vm_names[count.index]}"
   location           = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.rg.name
 
   ip_configuration {
     name                          = "new-ipconf-${var.vm_names[count.index]}"
-    subnet_id                     = azurerm_subnet.subnet.id
+    subnet_id                     = azurerm_subnet.subnet[count.index].id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.vm_public_ip[count.index].id
   }
 }
 
+# Network Interface NSG Association
 resource "azurerm_network_interface_security_group_association" "nic_nsg_association" {
   count                    = length(var.vm_names)
   network_interface_id     = azurerm_network_interface.nic[count.index].id
-  network_security_group_id = azurerm_network_security_group.nsg.id
+  network_security_group_id = azurerm_network_security_group.nsg[count.index].id
 }
