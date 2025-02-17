@@ -1,7 +1,7 @@
 resource "azurerm_subnet" "public_subnet" {
   name                 = var.subnet_new_name
   resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.vnet[0].name
+  virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = [var.public_subnet_address_prefix]
 }
 
@@ -15,7 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     name            = var.aks_node_pool_name
     node_count      = var.aks_node_pool_count
     vm_size         = var.aks_node_pool_vm_size
-    vnet_subnet_id  = azurerm_subnet.public_subnet[0].id
+    vnet_subnet_id  = azurerm_subnet.public_subnet.id  # Removed index []
   }
 
   identity {
@@ -36,7 +36,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     service_cidr   = "10.1.0.0/16"
     dns_service_ip = "10.1.0.10"
   }
-
+  
   depends_on = [azurerm_container_registry.new_acr]
 }
 
@@ -44,7 +44,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 resource "azurerm_role_assignment" "acrpull_role" {
   scope                            = azurerm_container_registry.new_acr.id
   role_definition_name             = "AcrPull"
-  principal_id                     = azurerm_kubernetes_cluster.aks.identity.principal_id
+  principal_id                     = azurerm_kubernetes_cluster.aks.identity.0.principal_id
   skip_service_principal_aad_check = true
 }
 
