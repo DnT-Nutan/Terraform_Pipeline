@@ -1,7 +1,7 @@
 # Create Virtual Networks (VNETs)
 resource "azurerm_virtual_network" "vnet" {
   count               = 2  # Creating exactly 2 VNETs
-  name                = var.vnet_names[count.index]  # Different name for each VNET
+  name                = "apple-vnet-${count.index + 1}"  # Dynamic name like apple-vnet-1, apple-vnet-2
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = [var.vnet_address_spaces[count.index]]  # Different address space for each VNET
@@ -10,7 +10,7 @@ resource "azurerm_virtual_network" "vnet" {
 # Create Subnets within each VNET (one subnet per VNET)
 resource "azurerm_subnet" "subnet" {
   count                 = 2  # Creating exactly 1 subnet per VNET
-  name                  = var.subnet_names[count.index]  # Different name for each subnet
+  name                  = "apple-subnet-${count.index + 1}"  # Dynamic name like apple-subnet-1, apple-subnet-2
   resource_group_name   = var.resource_group_name
   virtual_network_name  = azurerm_virtual_network.vnet[count.index].name  # Link to the corresponding VNET
   address_prefixes      = [var.subnet_address_prefixes[count.index]]  # Different address prefix for each subnet
@@ -21,7 +21,7 @@ resource "azurerm_subnet" "subnet" {
 # Create Network Security Groups (NSGs)
 resource "azurerm_network_security_group" "nsg" {
   count               = 2  # Creating exactly 2 NSGs
-  name                = var.nsg_names[count.index]  # Different name for each NSG
+  name                = "apple-nsg-${count.index + 1}"  # Dynamic name like apple-nsg-1, apple-nsg-2
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -68,12 +68,12 @@ resource "azurerm_network_security_group" "nsg" {
 # Network Interfaces (NICs)
 resource "azurerm_network_interface" "nic" {
   count               = 2  # Creating exactly 2 NICs for each VM
-  name                = "nic-${var.vm_name[count.index]}"  # Name for each NIC
-  location           = var.location
+  name                = "nic-${count.index + 1}"  # Dynamic name like nic-1, nic-2
+  location            = var.location
   resource_group_name = var.resource_group_name
 
   ip_configuration {
-    name                          = "new-ipconf-${var.vm_name[count.index]}"  # Name for IP configuration
+    name                          = "new-ipconf-${count.index + 1}"  # Dynamic name like new-ipconf-1, new-ipconf-2
     subnet_id                     = azurerm_subnet.subnet[count.index].id  # Link to the corresponding subnet
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.vm_public_ip[count.index].id  # Public IP for each NIC
