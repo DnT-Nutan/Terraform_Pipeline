@@ -23,11 +23,12 @@ resource "azurerm_virtual_machine_scale_set" "new_vmss" {
   os_profile_linux_config {
     disable_password_authentication = true
 
-    ssh_keys {
+    ssh_key {
       path     = "/home/ubuntu/.ssh/authorized_keys"
       key_data = file("/home/dnt/az-master_public_key.pub")
     }
   }
+
   # Network Profile
   network_profile {
     name    = "networkprofile"
@@ -35,7 +36,7 @@ resource "azurerm_virtual_machine_scale_set" "new_vmss" {
 
     ip_configuration {
       name      = "ipconfig"
-      subnet_id = azurerm_subnet.subnet.id
+      subnet_id = azurerm_subnet.subnet[0].id
       primary   = true
       # Attach to Load Balancer's backend pool
       load_balancer_backend_address_pool_ids = [
@@ -67,5 +68,5 @@ output "vmss_id" {
 
 # Output the Public IP ID
 output "public_ip_id" {
-  value = azurerm_public_ip.dnt_public_ip.id
+  value = azurerm_public_ip.vmss_public_ip[0].id
 }
