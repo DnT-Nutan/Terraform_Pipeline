@@ -12,11 +12,11 @@ variable "location" {
   default     = "West US 2"
 }
 
-# Variable for the virtual network names
-variable "vnet_names" {
-  description = "The names of the virtual networks."
-  type        = list(string)
-  default     = ["apple-vnet-1", "apple-vnet-2"]
+# Variable for the virtual network name prefix
+variable "vnet_name_prefix" {
+  description = "The prefix for the virtual network names."
+  type        = string
+  default     = "apple-vnet"
 }
 
 # Variable for the address space of the virtual networks
@@ -26,11 +26,11 @@ variable "vnet_address_spaces" {
   default     = ["10.0.0.0/16", "10.1.0.0/16"]
 }
 
-# Variable for the subnet names
-variable "subnet_names" {
-  description = "The names of the subnets."
-  type        = list(string)
-  default     = ["apple-subnet-1", "apple-subnet-2"]
+# Variable for the subnet name prefix
+variable "subnet_name_prefix" {
+  description = "The prefix for the subnet names."
+  type        = string
+  default     = "apple-subnet"
 }
 
 # Variable for the address prefix of the subnets
@@ -40,18 +40,18 @@ variable "subnet_address_prefixes" {
   default     = ["10.0.1.0/24", "10.1.1.0/24"]
 }
 
-# Variable for the Network Security Group (NSG) names
-variable "nsg_names" {
-  description = "The names of the network security groups."
-  type        = list(string)
-  default     = ["apple-nsg-1", "apple-nsg-2"]
+# Variable for the Network Security Group (NSG) name prefix
+variable "nsg_name_prefix" {
+  description = "The prefix for the network security group names."
+  type        = string
+  default     = "apple-nsg"
 }
 
-# Variable for the virtual machine name
-variable "vm_name" {
-  description = "The names of the virtual machines."
-  type        = list(string)
-  default     = ["apple-vm-1", "apple-vm-2"]
+# Variable for the virtual machine name prefix
+variable "vm_name_prefix" {
+  description = "The prefix for the virtual machine names."
+  type        = string
+  default     = "apple-vm"
 }
 
 # Variable for the public IP allocation method
@@ -113,7 +113,7 @@ variable "image_version" {
   default     = "latest"
 }
 
-# Variable for the public IP name
+# Variable for the public IP name prefix
 variable "lb_public_ip_name" {
   description = "The name of the public IP address."
   type        = string
@@ -208,7 +208,7 @@ variable "load_balancer_name" {
 variable "storage_account_name" {
   description = "The name of the Azure Storage Account."
   type        = string
-  default     = "teresangyarrstorage"
+  default     = "teresangyarrstorage000"
 }
 
 # Variable for the storage account tier
@@ -229,7 +229,7 @@ variable "account_replication_type" {
 variable "storage_container_name" {
   description = "The name of the container in the storage account."
   type        = string
-  default     = "apple-containerstore"
+  default     = "apple-containerstore000"
 }
 
 # Variable for New subnet
