@@ -1,21 +1,25 @@
+# Public IPs for VMs
 resource "azurerm_public_ip" "vm_public_ip" {
-  name                = var.vm_public_ip_name
+  count               = 2  # Creating 2 Public IPs
+  name                = "vm-public-ip-${var.vm_name[count.index]}"  # Unique name for each Public IP
   location            = var.location
   resource_group_name = var.resource_group_name  
   allocation_method   = var.public_ip_allocation_method
   sku                 = "Standard"
 }
 
+# Virtual Machines (VMs)
 resource "azurerm_virtual_machine" "vm" {
-  name                  = var.vm_name
-  location              = var.location
-  resource_group_name   = var.resource_group_name
-  network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = var.vm_size
+  count                = 2  # Creating 2 VMs
+  name                 = var.vm_name[count.index]  # Name for each VM
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  network_interface_ids = [azurerm_network_interface.nic[count.index].id]  # Link to the NIC for each VM
+  vm_size              = var.vm_size
 
   # OS Profile
   os_profile {
-    computer_name  = var.vm_name
+    computer_name  = var.vm_name[count.index]
     admin_username = var.admin_username
     admin_password = var.admin_password
   }
@@ -27,7 +31,7 @@ resource "azurerm_virtual_machine" "vm" {
     # Specify the SSH public key
     ssh_keys {
       path     = "/home/ubuntu/.ssh/authorized_keys"
-      key_data = file("/home/dnt/az-master_public_key.pub") 
+      key_data = file("/home/dnt/az-master_public_key.pub")
     }
   }
 
@@ -47,4 +51,3 @@ resource "azurerm_virtual_machine" "vm" {
     version   = var.image_version
   }
 }
-
