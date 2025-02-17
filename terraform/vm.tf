@@ -12,7 +12,7 @@ resource "azurerm_virtual_machine" "vm" {
   name                 = var.vm_names[count.index]
   location            = var.location
   resource_group_name = var.resource_group_name
-  network_interface_ids = [azurerm_network_interface.nic[count.index].id]
+  network_interface_ids = [azurerm_network_interface.nic[count.index % length(azurerm_network_interface.nic)].id]
   vm_size             = var.vm_size
 
   # OS Profile
