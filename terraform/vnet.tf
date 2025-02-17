@@ -3,7 +3,7 @@ resource "azurerm_virtual_network" "vnet" {
   count               = length(var.vnet_names)
   name                = var.vnet_names[count.index]
   location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = var.resource_group_name
   address_space       = [var.vnet_address_spaces[count.index]]
 }
 
@@ -11,7 +11,7 @@ resource "azurerm_virtual_network" "vnet" {
 resource "azurerm_subnet" "subnet" {
   count                 = length(var.subnet_names)
   name                  = var.subnet_names[count.index]
-  resource_group_name   = azurerm_resource_group.rg.name
+  resource_group_name   = var.resource_group_name
   virtual_network_name  = azurerm_virtual_network.vnet[count.index].name
   address_prefixes      = [var.subnet_address_prefixes[count.index]]
 
@@ -23,7 +23,7 @@ resource "azurerm_network_security_group" "nsg" {
   count               = length(var.nsg_names)
   name                = var.nsg_names[count.index]
   location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = var.resource_group_name
 
   # Allow SSH traffic on port 22
   security_rule {
@@ -70,7 +70,7 @@ resource "azurerm_network_interface" "nic" {
   count               = length(var.vm_names)
   name                = "nic-${var.vm_names[count.index]}"
   location           = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = var.resource_group_name
 
   ip_configuration {
     name                          = "new-ipconf-${var.vm_names[count.index]}"
