@@ -2,7 +2,7 @@
 variable "resource_group_name" {
   description = "The name of the resource group."
   type        = string
-  default     = "terra-resources"
+  default     = "newton-resources"
 }
 
 # Variable for the location
@@ -12,53 +12,66 @@ variable "location" {
   default     = "West US 2"
 }
 
-# Variable for the virtual network name prefix
-variable "vnet_name_prefix" {
-  description = "The prefix for the virtual network names."
+# Variable for the virtual network name
+variable "vnet_name" {
+  description = "The name of the virtual network."
   type        = string
-  default     = "terra-vnet"
+  default     = "samsung-vnet"
 }
 
-# Variable for the address space of the virtual networks
-variable "vnet_address_spaces" {
-  description = "The address spaces for the virtual networks."
+# Variable for the address space of the virtual network
+variable "vnet_address_space" {
+  description = "The address space for the virtual network."
   type        = list(string)
-  default     = ["10.0.0.0/16", "10.1.0.0/16"]
+  default     = ["10.0.0.0/16"]
 }
 
-# Variable for the subnet name prefix
-variable "subnet_name_prefix" {
-  description = "The prefix for the subnet names."
+# Variable for the subnet name
+variable "subnet_name" {
+  description = "The name of the subnet."
   type        = string
-  default     = "terra-subnet"
+  default     = "samsung-subnet"
 }
 
-# Variable for the address prefix of the subnets
-variable "subnet_address_prefixes" {
-  description = "The address prefixes for the subnets."
-  type        = list(string)
-  default     = ["10.0.1.0/24", "10.1.1.0/24"]
+# Variable for the address prefix of the subnet
+variable "subnet_address_prefix" {
+  description = "The address prefix for the subnet."
+  type        = list(string) 
+  default     = ["10.0.1.0/24"]
 }
 
-# Variable for the Network Security Group (NSG) name prefix
-variable "nsg_name_prefix" {
-  description = "The prefix for the network security group names."
+# Variable for the public IP name
+variable "lb_public_ip_name" {
+  description = "The name of the public IP address."
   type        = string
-  default     = "terra-nsg"
+  default     = "samsung-lb-public-ip"
 }
 
-# Variable for the virtual machine name prefix
-variable "vm_name_prefix" {
-  description = "The prefix for the virtual machine names."
+variable "vm_public_ip_name" {
+  description = "The name of the public IP address."
   type        = string
-  default     = "terra-vm"
+  default     = "samsung-public-ip"
 }
 
 # Variable for the public IP allocation method
 variable "public_ip_allocation_method" {
-  description = "The allocation method of the public IP."
+  description = "The allocation method for the public IP address."
   type        = string
   default     = "Static"
+}
+
+# Variable for the Network Security Group name
+variable "nsg_name" {
+  description = "The name of the Network Security Group."
+  type        = string
+  default     = "samsung-nsg"
+}
+
+# Variable for the virtual machine name
+variable "vm_name" {
+  description = "The name of the virtual machine."
+  type        = string
+  default     = "samsung-vm"
 }
 
 # Variable for the VM size
@@ -72,23 +85,25 @@ variable "vm_size" {
 variable "os_disk_name" {
   description = "The name of the OS disk."
   type        = string
-  default     = "os-disk"
+  default     = "samsung-os-disk"
 }
 
-# Variable for the admin username and password
+# Variable for the admin username
 variable "admin_username" {
-  description = "The administrator username."
+  description = "The admin username for the virtual machine."
   type        = string
-  default     = "adminuser"
+  default     = "ubuntu"
 }
 
+# Variable for the admin password
 variable "admin_password" {
-  description = "The administrator password."
+  description = "The admin password for the virtual machine."
   type        = string
-  default     = "Pass$00000"
+  sensitive   = true
+  default     = "pass$0000"  
 }
 
-# Variable for the Ubuntu image details
+# Variable for the image reference
 variable "image_publisher" {
   description = "The publisher of the image."
   type        = string
@@ -113,39 +128,32 @@ variable "image_version" {
   default     = "latest"
 }
 
-# Variable for the public IP name prefix
-variable "lb_public_ip_name" {
-  description = "The name of the public IP address."
-  type        = string
-  default     = "terra-lb-public-ip"
-}
-
 # Variable for DNS Zone Name
 variable "dns_zone_name" {
   description = "The name of the DNS zone."
   type        = string
-  default     = "test.p.frii.site"
+  default     = "test.p.frii.site" 
 }
 
 # Variable for Azure Container Registry Name
 variable "acr_name" {
   description = "The name of the Azure Container Registry."
   type        = string
-  default     = "terraregistry"
+  default     = "samsungregistry11"  
 }
 
 # Variable for Azure Container Registry SKU
 variable "acr_sku" {
   description = "The SKU of the Azure Container Registry."
   type        = string
-  default     = "Basic"
+  default     = "Basic"  
 }
 
 # Variable for Virtual Machine Scale Set Name
 variable "vmss_name" {
   description = "The name of the Virtual Machine Scale Set."
   type        = string
-  default     = "terra-vmss"
+  default     = "samsung-vmss"  
 }
 
 # Variable for VMSS SKU
@@ -159,7 +167,7 @@ variable "vmss_sku" {
 variable "vmss_instance_count" {
   description = "The number of instances in the Virtual Machine Scale Set."
   type        = number
-  default     = 2
+  default     = 1
 }
 
 # Variable for the VMSS upgrade policy
@@ -173,42 +181,42 @@ variable "vmss_upgrade_policy" {
 variable "vmss_health_probe_name" {
   description = "The name of the health probe for the VMSS."
   type        = string
-  default     = "terra-health-probe"
+  default     = "samsung-health-probe"
 }
 
 # Variable for the VMSS load balancer name
 variable "vmss_load_balancer_name" {
   description = "The name of the load balancer for the VMSS."
   type        = string
-  default     = "terra-load-balancer"
+  default     = "samsung-load-balancer"
 }
 
 # Variable for the VMSS network interface name
 variable "vmss_nic_name" {
   description = "The name of the network interface for the VMSS."
   type        = string
-  default     = "terra-vmss-nic"
+  default     = "samsung-vmss-nic"
 }
 
 # Variable for the VMSS network security group name
 variable "vmss_nsg_name" {
   description = "The name of the network security group for the VMSS."
   type        = string
-  default     = "terra-vmss-nsg"
+  default     = "samsung-vmss-nsg"
 }
 
 # Variable for Load Balancer
 variable "load_balancer_name" {
   description = "Name of the Load Balancer."
   type        = string
-  default     = "terra-lb"
+  default     = "samsung-lb"
 }
 
 # Variable for the storage account name
 variable "storage_account_name" {
   description = "The name of the Azure Storage Account."
   type        = string
-  default     = "terrastorage11"
+  default     = "samsungstorage11"
 }
 
 # Variable for the storage account tier
@@ -229,28 +237,29 @@ variable "account_replication_type" {
 variable "storage_container_name" {
   description = "The name of the container in the storage account."
   type        = string
-  default     = "terra-container11"
+  default     = "samsung-container11" 
 }
 
-# Variable for New subnet
+
+#Variable for New subnet
 variable "subnet_new_name" {
   description = "The name of the subnet for the Kubernetes cluster."
   type        = string
-  default     = terra-public-subnet"
+  default     = "samsung-subnet"
 }
 
-# Variable for the address prefix of the new public subnet
+# Variable for the address prefix of the subnet
 variable "public_subnet_address_prefix" {
   description = "The address prefix for the new public subnet."
   type        = string
-  default     = "10.0.2.0/24"
+  default     = "10.0.2.0/24"  
 }
 
 # AKS Cluster Name
 variable "aks_cluster_name" {
   description = "The name of the AKS cluster."
   type        = string
-  default     = "terra-aks-cluster"
+  default     = "samsung-aks-cluster"
 }
 
 # AKS DNS Name Prefix
@@ -264,7 +273,7 @@ variable "aks_dns_name_prefix" {
 variable "aks_node_pool_name" {
   description = "The name of the AKS node pool."
   type        = string
-  default     = "nodepool"
+  default     = "nodepool" 
 }
 
 # AKS Node Pool VM Size
@@ -285,7 +294,7 @@ variable "aks_node_pool_count" {
 variable "postgresql_server_name" {
   description = "The name of the PostgreSQL server"
   type        = string
-  default     = "terra-postserver"
+  default     = "samsung-postserver"
 }
 
 variable "postgresql_version" {
@@ -304,7 +313,7 @@ variable "administrator_login_password" {
   description = "The password for the administrator login"
   type        = string
   sensitive   = true
-  default     = "Pass$00000"
+  default     = "pass$0000"
 }
 
 variable "sku_name" {
@@ -322,7 +331,7 @@ variable "storage_mb" {
 variable "database_name" {
   description = "The name of the PostgreSQL database"
   type        = string
-  default     = "terradbpostgres"
+  default     = "samsungdbpostgres"
 }
 
 variable "database_charset" {
@@ -340,7 +349,7 @@ variable "database_collation" {
 variable "high_availability_mode" {
   description = "The high availability mode for the PostgreSQL server"
   type        = string
-  default     = "None"
+  default     = "None"  
 }
 
 # SSL enforcement for the PostgreSQL server
