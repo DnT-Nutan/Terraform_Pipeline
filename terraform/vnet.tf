@@ -1,4 +1,4 @@
-# Create Virtual Networks (VNETs)
+# Virtual Networks (VNETs)
 resource "azurerm_virtual_network" "vnet" {
   count               = 2  # Creating exactly 2 VNETs
   name                = "apple-vnet-${count.index + 1}"  # Dynamic name like apple-vnet-1, apple-vnet-2
@@ -7,7 +7,7 @@ resource "azurerm_virtual_network" "vnet" {
   address_space       = [var.vnet_address_spaces[count.index]]  # Different address space for each VNET
 }
 
-# Create Subnets within each VNET (one subnet per VNET)
+# Subnets within each VNET
 resource "azurerm_subnet" "subnet" {
   count                 = 2  # Creating exactly 1 subnet per VNET
   name                  = "apple-subnet-${count.index + 1}"  # Dynamic name like apple-subnet-1, apple-subnet-2
