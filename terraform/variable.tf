@@ -2,7 +2,7 @@
 variable "resource_group_name" {
   description = "The name of the resource group."
   type        = string
-  default     = "apple-resources"
+  default     = "terra-resources"
 }
 
 # Variable for the location
@@ -16,7 +16,7 @@ variable "location" {
 variable "vnet_name_prefix" {
   description = "The prefix for the virtual network names."
   type        = string
-  default     = "apple-vnet"
+  default     = "terra-vnet"
 }
 
 # Variable for the address space of the virtual networks
@@ -30,7 +30,7 @@ variable "vnet_address_spaces" {
 variable "subnet_name_prefix" {
   description = "The prefix for the subnet names."
   type        = string
-  default     = "apple-subnet"
+  default     = "terra-subnet"
 }
 
 # Variable for the address prefix of the subnets
@@ -44,14 +44,14 @@ variable "subnet_address_prefixes" {
 variable "nsg_name_prefix" {
   description = "The prefix for the network security group names."
   type        = string
-  default     = "apple-nsg"
+  default     = "terra-nsg"
 }
 
 # Variable for the virtual machine name prefix
 variable "vm_name_prefix" {
   description = "The prefix for the virtual machine names."
   type        = string
-  default     = "apple-vm"
+  default     = "terra-vm"
 }
 
 # Variable for the public IP allocation method
@@ -85,7 +85,7 @@ variable "admin_username" {
 variable "admin_password" {
   description = "The administrator password."
   type        = string
-  default     = "pass$00000"
+  default     = "Pass$00000"
 }
 
 # Variable for the Ubuntu image details
@@ -117,7 +117,7 @@ variable "image_version" {
 variable "lb_public_ip_name" {
   description = "The name of the public IP address."
   type        = string
-  default     = "lb-public-ip"
+  default     = "terra-lb-public-ip"
 }
 
 # Variable for DNS Zone Name
@@ -131,7 +131,7 @@ variable "dns_zone_name" {
 variable "acr_name" {
   description = "The name of the Azure Container Registry."
   type        = string
-  default     = "tujanenarepo"
+  default     = "terraregistry"
 }
 
 # Variable for Azure Container Registry SKU
@@ -145,7 +145,7 @@ variable "acr_sku" {
 variable "vmss_name" {
   description = "The name of the Virtual Machine Scale Set."
   type        = string
-  default     = "apple-vmss"
+  default     = "terra-vmss"
 }
 
 # Variable for VMSS SKU
@@ -173,42 +173,42 @@ variable "vmss_upgrade_policy" {
 variable "vmss_health_probe_name" {
   description = "The name of the health probe for the VMSS."
   type        = string
-  default     = "apple-health-probe"
+  default     = "terra-health-probe"
 }
 
 # Variable for the VMSS load balancer name
 variable "vmss_load_balancer_name" {
   description = "The name of the load balancer for the VMSS."
   type        = string
-  default     = "apple-load-balancer"
+  default     = "terra-load-balancer"
 }
 
 # Variable for the VMSS network interface name
 variable "vmss_nic_name" {
   description = "The name of the network interface for the VMSS."
   type        = string
-  default     = "apple-vmss-nic"
+  default     = "terra-vmss-nic"
 }
 
 # Variable for the VMSS network security group name
 variable "vmss_nsg_name" {
   description = "The name of the network security group for the VMSS."
   type        = string
-  default     = "apple-vmss-nsg"
+  default     = "terra-vmss-nsg"
 }
 
 # Variable for Load Balancer
 variable "load_balancer_name" {
   description = "Name of the Load Balancer."
   type        = string
-  default     = "apple-lb"
+  default     = "terra-lb"
 }
 
 # Variable for the storage account name
 variable "storage_account_name" {
   description = "The name of the Azure Storage Account."
   type        = string
-  default     = "teresangyarrstorage000"
+  default     = "terrastorage11"
 }
 
 # Variable for the storage account tier
@@ -229,14 +229,14 @@ variable "account_replication_type" {
 variable "storage_container_name" {
   description = "The name of the container in the storage account."
   type        = string
-  default     = "apple-containerstore000"
+  default     = "terra-container11"
 }
 
 # Variable for New subnet
 variable "subnet_new_name" {
   description = "The name of the subnet for the Kubernetes cluster."
   type        = string
-  default     = "apple-public-subnet"
+  default     = terra-public-subnet"
 }
 
 # Variable for the address prefix of the new public subnet
@@ -250,7 +250,7 @@ variable "public_subnet_address_prefix" {
 variable "aks_cluster_name" {
   description = "The name of the AKS cluster."
   type        = string
-  default     = "apple-aks-cluster"
+  default     = "terra-aks-cluster"
 }
 
 # AKS DNS Name Prefix
@@ -285,7 +285,7 @@ variable "aks_node_pool_count" {
 variable "postgresql_server_name" {
   description = "The name of the PostgreSQL server"
   type        = string
-  default     = "apple-postserver"
+  default     = "terra-postserver"
 }
 
 variable "postgresql_version" {
@@ -304,7 +304,7 @@ variable "administrator_login_password" {
   description = "The password for the administrator login"
   type        = string
   sensitive   = true
-  default     = "pass$00000"
+  default     = "Pass$00000"
 }
 
 variable "sku_name" {
@@ -322,7 +322,7 @@ variable "storage_mb" {
 variable "database_name" {
   description = "The name of the PostgreSQL database"
   type        = string
-  default     = "appledbpostgres"
+  default     = "terradbpostgres"
 }
 
 variable "database_charset" {
