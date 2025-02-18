@@ -4,17 +4,12 @@ resource "random_id" "vnet_name_suffix" {
   byte_length  = 4
 }
 
-# random_ip_range resource for generating the VNet address space
-resource "random_ip_range" "vnet_address_range" {
-  count       = 1
-  cidr_block  = "10.0.0.0/16"
-}
-
+# Static CIDR block for the VNet address space
 resource "azurerm_virtual_network" "vnet" {
   name                = "samsung-vnet-${random_id.vnet_name_suffix[count.index].hex}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  address_space       = [random_ip_range.vnet_address_range[count.index].cidr_block]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "subnet" {
@@ -25,7 +20,6 @@ resource "azurerm_subnet" "subnet" {
 
   depends_on = [azurerm_virtual_network.vnet]
 }
-
 
 resource "azurerm_network_security_group" "nsg" {
   name                = var.nsg_name
