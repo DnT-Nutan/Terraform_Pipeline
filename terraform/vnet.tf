@@ -1,19 +1,21 @@
+# Create VNets with random names and address space
 resource "azurerm_virtual_network" "vnet" {
-  name                = var.vnet_name
+  count               = 2
+  name                = "samsung-vnet-${random_id.vnet_name_suffix[count.index].hex}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  address_space       = var.vnet_address_space
+  address_space       = [random_ip_range.vnet_address_range[count.index].cidr_block]
 }
 
+# Create Subnets with random names and address prefixes
 resource "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
+  count                = 2
+  name                 = "subnet-${random_id.subnet_name_suffix[count.index].hex}"
   resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = var.subnet_address_prefix
-
+  virtual_network_name = azurerm_virtual_network.vnet[count.index].name
+  address_prefixes     = [random_ip_range.subnet_address_range[count.index].cidr_block]
   depends_on = [azurerm_virtual_network.vnet]
 }
-
 
 resource "azurerm_network_security_group" "nsg" {
   name                = var.nsg_name
