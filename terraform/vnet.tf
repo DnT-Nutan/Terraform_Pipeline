@@ -1,12 +1,11 @@
 # random_id resource to generate unique VNet name suffix
 resource "random_id" "vnet_name_suffix" {
-  count        = 1
   byte_length  = 4
 }
 
 # Static CIDR block for the VNet address space
 resource "azurerm_virtual_network" "vnet" {
-  name                = "samsung-vnet-${random_id.vnet_name_suffix[count.index].hex}"
+  name                = "samsung-vnet-${random_id.vnet_name_suffix.hex}"
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = ["10.0.0.0/16"]
