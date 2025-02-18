@@ -1,29 +1,24 @@
-# Virtual Networks (VNETs)
 resource "azurerm_virtual_network" "vnet" {
-  count               = 2  # Creating exactly 2 VNETs
-  name                = "apple-vnet-${count.index + 1}"  # Dynamic name like apple-vnet-1, apple-vnet-2
+  name                = var.vnet_name
   location            = var.location
   resource_group_name = var.resource_group_name
-  address_space       = [var.vnet_address_spaces[count.index]]  # Different address space for each VNET
+  address_space       = var.vnet_address_space
 }
 
-# Subnets within each VNET
 resource "azurerm_subnet" "subnet" {
-  count                 = 2  # Creating exactly 1 subnet per VNET
-  name                  = "apple-subnet-${count.index + 1}"  # Dynamic name like apple-subnet-1, apple-subnet-2
-  resource_group_name   = var.resource_group_name
-  virtual_network_name  = azurerm_virtual_network.vnet[count.index].name  # Link to the corresponding VNET
-  address_prefixes      = [var.subnet_address_prefixes[count.index]]  # Different address prefix for each subnet
+  name                 = var.subnet_name
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = var.subnet_address_prefix
 
   depends_on = [azurerm_virtual_network.vnet]
 }
 
-# Create Network Security Groups (NSGs)
+
 resource "azurerm_network_security_group" "nsg" {
-  count               = 2  # Creating exactly 2 NSGs
-  name                = "apple-nsg-${count.index + 1}"  # Dynamic name like apple-nsg-1, apple-nsg-2
+  name                = var.nsg_name
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name   = var.resource_group_name
 
   # Allow SSH traffic on port 22
   security_rule {
@@ -65,24 +60,20 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
-# Network Interfaces (NICs)
 resource "azurerm_network_interface" "nic" {
-  count               = 2  # Creating exactly 2 NICs for each VM
-  name                = "nic-${count.index + 1}"  # Dynamic name like nic-1, nic-2
+  name                = "new-nic"
   location            = var.location
   resource_group_name = var.resource_group_name
 
   ip_configuration {
-    name                          = "new-ipconf-${count.index + 1}"  # Dynamic name like new-ipconf-1, new-ipconf-2
-    subnet_id                     = azurerm_subnet.subnet[count.index].id  # Link to the corresponding subnet
+    name                          = "new-ipconf"
+    subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vm_public_ip[count.index].id  # Public IP for each NIC
+    public_ip_address_id          = azurerm_public_ip.vm_public_ip.id  
   }
 }
 
-# Network Interface NSG Association
 resource "azurerm_network_interface_security_group_association" "nic_nsg_association" {
-  count                    = 2  # Associating 2 NICs with NSGs
-  network_interface_id     = azurerm_network_interface.nic[count.index].id  # NIC ID
-  network_security_group_id = azurerm_network_security_group.nsg[count.index].id  # NSG ID
+  network_interface_id      = azurerm_network_interface.nic.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
