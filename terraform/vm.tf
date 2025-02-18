@@ -3,9 +3,24 @@ resource "azurerm_public_ip" "vm_public_ip" {
   count               = 2  # Creating 2 Public IPs
   name                = "vm-public-ip-${var.vm_name[count.index]}"  # Unique name for each Public IP
   location            = var.location
-  resource_group_name = var.resource_group_name  
+  resource_group_name = var.resource_group_name
   allocation_method   = var.public_ip_allocation_method
-  sku                 = "Standard"
+  sku                 = "Standard"  # Set to Standard SKU for better performance
+}
+
+# Network Interfaces (NICs) for VMs (Example)
+resource "azurerm_network_interface" "nic" {
+  count               = 2  # Creating 2 NICs
+  name                = "nic-${var.vm_name[count.index]}"  # Unique NIC name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  ip_configuration {
+    name                          = "ipconfig-${var.vm_name[count.index]}"  # Dynamic IP configuration name
+    subnet_id                     = azurerm_subnet.subnet[count.index].id  # Link to the subnet
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.vm_public_ip[count.index].id  # Link the Public IP
+  }
 }
 
 # Virtual Machines (VMs)
@@ -50,4 +65,71 @@ resource "azurerm_virtual_machine" "vm" {
     sku       = var.image_sku
     version   = var.image_version
   }
+
+  tags = {
+    environment = "production"
+  }
+}
+
+# Variables
+variable "location" {
+  description = "The Azure region where resources will be created"
+  type        = string
+}
+
+variable "resource_group_name" {
+  description = "The name of the resource group"
+  type        = string
+}
+
+variable "vm_name" {
+  description = "The names for the VMs"
+  type        = list(string)
+}
+
+variable "public_ip_allocation_method" {
+  description = "The allocation method for Public IP (Dynamic or Static)"
+  type        = string
+  default     = "Dynamic"
+}
+
+variable "vm_size" {
+  description = "The size of the virtual machines"
+  type        = string
+}
+
+variable "admin_username" {
+  description = "The administrator username for the VMs"
+  type        = string
+}
+
+variable "admin_password" {
+  description = "The administrator password for the VMs"
+  type        = string
+  sensitive   = true
+}
+
+variable "os_disk_name" {
+  description = "The name of the OS disk"
+  type        = string
+}
+
+variable "image_publisher" {
+  description = "The publisher of the image for VM"
+  type        = string
+}
+
+variable "image_offer" {
+  description = "The offer of the image for VM"
+  type        = string
+}
+
+variable "image_sku" {
+  description = "The SKU of the image for VM"
+  type        = string
+}
+
+variable "image_version" {
+  description = "The version of the image for VM"
+  type        = string
 }
