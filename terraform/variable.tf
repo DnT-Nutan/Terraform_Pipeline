@@ -9,7 +9,7 @@ variable "resource_group_name" {
 variable "location" {
   description = "The Azure location where resources will be created."
   type        = string
-  default     = "West US 2"
+  default     = "westus2"
 }
 
 # Variable for the virtual network name
