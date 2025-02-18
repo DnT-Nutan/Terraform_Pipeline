@@ -12,31 +12,31 @@ variable "location" {
   default     = "westus2"
 }
 
-# Variable for the virtual network name
+# Variable for the virtual network name (will be dynamically generated)
 variable "vnet_name" {
   description = "The name of the virtual network."
   type        = string
   default     = "samsung-vnet"
 }
 
-# Variable for the address space of the virtual network
+# Variable for the address space of the virtual network (will be dynamically generated)
 variable "vnet_address_space" {
   description = "The address space for the virtual network."
   type        = list(string)
   default     = ["10.0.0.0/16"]
 }
 
-# Variable for the subnet name
+# Variable for the subnet name (will be dynamically generated)
 variable "subnet_name" {
   description = "The name of the subnet."
   type        = string
   default     = "samsung-subnet"
 }
 
-# Variable for the address prefix of the subnet
+# Variable for the address prefix of the subnet (will be dynamically generated)
 variable "subnet_address_prefix" {
   description = "The address prefix for the subnet."
-  type        = list(string) 
+  type        = list(string)
   default     = ["10.0.1.0/24"]
 }
 
