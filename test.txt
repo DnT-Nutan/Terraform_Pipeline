@@ -5,7 +5,7 @@ Bleassed with Ganesha*
 Let's Celebrate the Navratri !!!
 Jay mata diiiiiiii !!!
 
-
+<<<<<<< Updated upstream
 Ayeeee Haalloooooo, Enjoying Garba Night!!!
 Good Evening People.....
 Hello 
@@ -16,3 +16,7 @@ Good Morning, Guyesss
 Moon is wake-up early 
 Wao Sun look like a blue 
 Let's update to Windows 12 version....
+
+=======
+>>>>>>> Stashed changes
+Ganpati Bappa Moryaaaa !!!
